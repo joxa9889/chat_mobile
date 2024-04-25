@@ -30,6 +30,8 @@ class _ChattingContactsState extends State<ChattingContacts> {
   List<dynamic> statuses = [];
   String simplePath = Rooms().justPath();
   List<dynamic> chattingRooms = [];
+  List<dynamic> allStorieses = [];
+  
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -37,10 +39,11 @@ class _ChattingContactsState extends State<ChattingContacts> {
   getData() async {
     var dt = await Auth().getMyData();
     var dataToRooms = await Rooms().getMethod();
-    setState(() {
+    setState(() { 
       myData = dt;
       chattingRooms = dataToRooms;
     });
+    print('rooms');
     print(chattingRooms);
   }
 
@@ -55,6 +58,11 @@ class _ChattingContactsState extends State<ChattingContacts> {
     setState(() {
       statuses[index] = data;
     });
+  }
+
+  getStorieses() async {
+    allStorieses = await Storieses().getAllStorieses();
+    allStorieses.removeWhere((element) => element == null);
   }
 
   @override
@@ -79,6 +87,7 @@ class _ChattingContactsState extends State<ChattingContacts> {
         });
       }
     });
+    getStorieses();
   }
 
 
@@ -416,7 +425,9 @@ class _ChattingContactsState extends State<ChattingContacts> {
 
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (builder) => const ProfileSettings()));
+                              Navigator.push(context, MaterialPageRoute(builder: (builder) => ProfileSettings(
+                                status: status,
+                              )));
                             },
                             child: Container(
                               color: const Color.fromRGBO(28, 29, 34, 1),
@@ -540,29 +551,51 @@ class _ChattingContactsState extends State<ChattingContacts> {
               ),
             ),
         
-            Container(
-              decoration: const BoxDecoration(
-                border: Border(bottom: BorderSide(color: Color.fromRGBO(55, 56, 58, 1)))
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              height: 83,
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                scrollDirection: Axis.horizontal,
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                       Navigator.push(context, MaterialPageRoute(builder: (builder) => const StoriesPage()));
-                    },
-                    child: const CircleAvatar(
-                      radius: 37,           
-                      backgroundImage: AssetImage('assets/download.jpeg'),
-                    ),
-                  );
-                } 
-              ),
-            ),
+            // allStorieses.isNotEmpty ? Container(
+            //   decoration: const BoxDecoration(
+            //     border: Border(bottom: BorderSide(color: Color.fromRGBO(55, 56, 58, 1)))
+            //   ),
+            //   padding: const EdgeInsets.symmetric(vertical: 10),
+            //   height: 83,
+            //   child: ListView.builder(
+            //     padding: const EdgeInsets.symmetric(horizontal: 15),
+            //     scrollDirection: Axis.horizontal,
+            //     itemCount: allStorieses.length,
+            //     itemBuilder: (context, index) {
+            //       return GestureDetector(
+            //         onTap: () {
+            //           Navigator.push(
+            //             context,
+            //             MaterialPageRoute(
+            //               builder: (builder) => StoriesPage(
+            //                 allStorieses: allStorieses,
+            //                 which_user: allStorieses[index],
+            //               ),
+            //             ),
+            //           );
+            //         },
+            //         child: allStorieses[index]['profile_img'] != null
+            //             ? CircleAvatar(
+            //                 backgroundColor: const Color.fromARGB(255, 41, 40, 40),
+            //                 radius: 37,
+            //                 backgroundImage:
+            //                     CachedNetworkImageProvider(allStorieses[index]['profile_img']),
+            //               )
+            //             : CircleAvatar(
+            //                 backgroundColor: const Color.fromARGB(255, 41, 40, 40),
+            //                 radius: 37,
+            //                 child: Text(
+            //                   allStorieses[index]['first_name']?[0] ?? "",
+            //                   style: const TextStyle(
+            //                       fontWeight: FontWeight.bold,
+            //                       fontSize: 20,
+            //                       color: Colors.white),
+            //                 ),
+            //               ),
+            //       );
+            //     },
+            //   ),
+            // ) : Container(),
         
             Expanded(
               child: Container(

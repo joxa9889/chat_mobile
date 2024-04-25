@@ -76,7 +76,7 @@ class _LogInPageState extends State<LogInPage> {
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey)
                           ),
-                          hintText: 'Email',
+                          hintText: 'Username',
                           hintStyle: TextStyle(
                             color: Colors.white
                           ),

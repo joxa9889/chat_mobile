@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-String startUrl = '192.168.1.3:8000';
+String startUrl = '192.168.20.109:8000';
 
 
 class Auth {
@@ -185,7 +185,8 @@ class Register {
       "username": username,
       "password": password,
       "profile_img": null,
-      "last_login": null
+      "last_active": null,
+      "bio": "",
     };
 
     Map<String, String> headers = {
@@ -196,6 +197,8 @@ class Register {
     String body = json.encode(data);
     var response = await http.post(url, body: body, headers: headers);
     var resp = jsonDecode(utf8.decode(response.bodyBytes));
+
+    print(resp);
     await Auth().makeAuth(username, password);
     return resp;
   }
@@ -219,4 +222,20 @@ class Contacts {
     return rsp;
   }
 
+}
+
+
+class Storieses {
+  Future<List<dynamic>> getAllStorieses () async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var url = Uri.http(startUrl, '/api/stories/');
+    final token = prefs.getString('token');
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token $token'
+    };
+    var response = await http.get(url, headers: headers);
+    var rsp = jsonDecode(utf8.decode(response.bodyBytes));
+    return rsp['stories'];
+  }
 }
